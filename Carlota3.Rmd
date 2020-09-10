@@ -294,7 +294,9 @@ salaries_null_world<-omega%>%
   calculate(stat="diff in means",order=c("female","male"))
 #Visualize the null distribution and get the p value
 salaries_null_world %>% visualize() +
-  shade_p_value(obs_stat = init_sal_null, direction = "two-sided")+labs(x="Difference between mean salary of women and men",y="Count")+theme_clean()
+  shade_p_value(obs_stat = init_sal_null, direction = "two-sided")+
+  #Customize the plot
+  labs(x="Difference between mean salary of women and men",y="Count",title="Is there a significant difference between men and women's salaries?",subtitle="Null hypothesis distribution and p-value")+theme_clean()
 #Get the numerical value for p
 salaries_null_world %>% get_p_value(obs_stat = init_sal_null, direction = "two_sided")
 ```
@@ -339,7 +341,8 @@ experience_null_world <- omega %>%
 #Visualize the null distribution and get the p value
 experience_null_world %>% visualize() +
   shade_p_value(obs_stat = init_exp_null, direction = "two-sided")+
-  labs(x="Difference between mean experience of women and men",y="Count")+theme_clean()
+  #Customize the plot
+  labs(x="Difference between mean experience of women and men",y="Count",title="Is there a significant difference between men and women's experience?",subtitle="Null hypothesis distribution and p-value")+theme_clean()
 #Get the numerical p value
 experience_null_world %>% get_p_value(obs_stat = init_exp_null, direction = "two_sided")
 ```
