@@ -242,7 +242,7 @@ ggplot(selected_directors,aes(x=avg,y=reorder(director,avg),color=director))+
 
 At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted. 
 
-You are asked to carry out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
+We carried out the analysis to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
 
 ## Loading the data
 
@@ -254,17 +254,9 @@ glimpse(omega) # examine the data frame
 
 ## Relationship Salary - Gender ?
 
-The data frame `omega`  contains the salaries for the sample of 50 executives in the company. Can you conclude that there is a significant difference between the salaries of the male and female executives?
+The data frame `omega` contains the salaries for the sample of 50 executives in the company. Is it possible to conclude that  there is a significant difference between the salaries of the male and female executives?
 
-Note that you can perform different types of analyses, and check whether they all lead to the same conclusion 
-
-.	Confidence intervals
-.	Hypothesis testing
-.	Correlation analysis
-.	Regression
-
-
-Calculate summary statistics on salary by gender. Also, create and print a dataframe where, for each gender, you show the mean, SD, sample size, the t-critical, the SE, the margin of error, and the low/high endpoints of a 95% condifence interval
+To answer the question, we will start by analysing the key statistical parameters.
 
 ```{r, confint_single_valiables}
 # Summary Statistics of salary by gender
@@ -272,28 +264,43 @@ mosaic::favstats (salary ~ gender, data=omega)
 
 # Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
 # the t-critical value, the standard error, the margin of error, 
-# and the low/high endpoints of a 95% condifence interval
+# and the low/high endpoints of a 95% confidence interval
 statistics<-omega%>%
 select(salary,gender)%>%
   group_by(gender)%>%
-  summarise(mean_sal=mean(salary),sd_sal=sd(salary),sample_size=n(),t_crit=qt(0.975,sample_size-1),se_sal=sd_sal/sqrt(sample_size),margin_error=t_crit*se_sal,low=mean_sal-margin_error,high=mean_sal+margin_error)
+  summarise(mean=mean(salary),SD=sd(salary),SampleSize=n(),t_critical=qt(0.975,SampleSize-1),SE=SD/sqrt(SampleSize),
+            MarginError=t_critical*SE,LowEndpoint=mean-MarginError,HighEndpoint=mean+MarginError)
+statistics
 
 ```
 
-> What can you conclude from your analysis? A couple of sentences would be enough
+From the data, we can observe that the confidence intervals do not overlap. Hence, we can say that the difference between the salaries of male and female executives is at least 95% statistically significant.
 
-You can also run a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. You should tun your hypothesis testing using `t.test()` and with the simulation method from the `infer` package.
+We will also run a hypothesis testing, assuming a null hypothesis that the mean difference in salaries for mean and women is zero. 
 
 ```{r, hypothesis_testing}
 # hypothesis testing using t.test() 
-
+t.test(salary ~ gender, data = omega)
 
 # hypothesis testing using infer package
 
-
+#Initialize the test
+init_sal_null<-omega%>%
+specify(salary ~ gender)%>%
+calculate(stat="diff in means",order=c("female","male")) 
+#Simulate the test on the null distribution, which we will save as null
+salaries_null_world<-omega%>%
+  specify(salary ~ gender)%>%
+  hypothesize(null="independence")%>%
+  generate(reps=1000,type="permute")%>%
+  calculate(stat="diff in means",order=c("female","male"))
+#Visualize the null distribution and get the p value
+salaries_null_world%>%visualize() +
+  shade_p_value(obs_stat = init_sal_null, direction = "two-sided")
 ```
 
-> What can you conclude from your analysis? A couple of sentences would be enough
+From the hypothesis testing, we can confirm that.... CARRY ON WITH THIS
+
 
 
 ## Relationship Experience - Gender?
