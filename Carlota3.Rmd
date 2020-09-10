@@ -239,13 +239,11 @@ ggplot(selected_directors,aes(x=avg,y=reorder(director,avg),color=director))+
 
 # Omega Group plc- Pay Discrimination
 
-
 At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted. 
 
 We carried out the analysis to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
 
 ## Loading the data
-
 
 ```{r load_omega_data}
 omega <- read_csv(here::here("data", "omega.csv"))
@@ -279,10 +277,10 @@ From the data, we can observe that the confidence intervals do not overlap. Henc
 We will also run a hypothesis testing, assuming a null hypothesis that the mean difference in salaries for mean and women is zero. 
 
 ```{r, hypothesis_testing}
-# hypothesis testing using t.test() 
+# Hypothesis testing using t.test() 
 t.test(salary ~ gender, data = omega)
 
-# hypothesis testing using infer package
+# Hypothesis testing using infer package
 
 #Initialize the test
 init_sal_null<-omega%>%
@@ -295,27 +293,57 @@ salaries_null_world<-omega%>%
   generate(reps=1000,type="permute")%>%
   calculate(stat="diff in means",order=c("female","male"))
 #Visualize the null distribution and get the p value
-salaries_null_world%>%visualize() +
+salaries_null_world %>% visualize() +
   shade_p_value(obs_stat = init_sal_null, direction = "two-sided")
+#Get the numerical value for p
+salaries_null_world %>% get_p_value(obs_stat = init_sal_null, direction = "two_sided")
 ```
 
-From the hypothesis testing, we can confirm that.... CARRY ON WITH THIS
-
-
+From the hypothesis testing, we can confirm that.... CARRY ON WITH THIS!!!!
 
 ## Relationship Experience - Gender?
 
-At the board meeting, someone raised the issue that there was indeed a substantial difference between male and female salaries, but that this was attributable to other reasons such as differences in experience. A questionnaire send out to the 50 executives in the sample reveals that the average experience of the men is approximately 21 years, whereas the women only have about 7 years experience on average (see table below).
+At the board meeting, someone raised the issue that there was indeed a substantial difference between male and female salaries, but that this was attributable to other reasons such as differences in experience. A questionnaire send out to the 50 executives in the sample reveals that the average experience of the men is approximately 21 years, whereas the women only have about 7 years experience on average. 
+The relevant statistical information is shown in the tables below.
 
 ```{r, experience_stats}
-# Summary Statistics of salary by gender
+# Summary Statistics of experience by gender
 favstats (experience ~ gender, data=omega)
-
+#Calculate additional key statistics and confidence intervals
+statistics<-omega%>%
+select(experience,gender)%>%
+  group_by(gender)%>%
+  summarise(mean=mean(experience),SD=sd(experience),SampleSize=n(),t_critical=qt(0.975,SampleSize-1),SE=SD/sqrt(SampleSize),
+  MarginError=t_critical*SE,LowEndpoint=mean-MarginError,HighEndpoint=mean+MarginError)
+statistics
 ```
 
-Based on this evidence, can you conclude that there is a significant difference between the experience of the male and female executives? Perform similar analyses as in the previous section. Does your conclusion validate or endanger your conclusion about the difference in male and female salaries?  
+The confidence intervals do not overlap. Hence, we can conclude that there is at least a 95% significant statistical difference between experience of female and male executives.
+Further tests based on null hypothesis are conducted below.  
+```{r, hypothesis_testing_experience}
+# Hypothesis testing using t.test() 
+t.test(experience ~ gender, data = omega)
 
+# Hypothesis testing using infer package
+#Initialize the test
+init_exp_null <- omega %>%
+specify(experience ~ gender)%>%
+calculate(stat="diff in means",order=c("female","male")) 
 
+#Simulate the test on the null distribution, which we will save as experience_null_world
+experience_null_world <- omega %>%
+  specify(experience ~ gender) %>%
+  hypothesize(null="independence") %>%
+  generate(reps=1000,type="permute") %>%
+  calculate(stat="diff in means",order=c("male","female"))
+
+#Visualize the null distribution and get the p value
+experience_null_world %>% visualize() +
+  shade_p_value(obs_stat = init_exp_null, direction = "two-sided")
+#Get the numerical p value
+experience_null_world %>% get_p_value(obs_stat = init_exp_null, direction = "two_sided")
+```
+As we can see from the perfomed using t.test(), the plot of the null distribution and the p value obtained (which is less than 0.05)
 
 ## Relationship Salary - Experience ?
 
