@@ -239,9 +239,9 @@ ggplot(selected_directors,aes(x=avg,y=reorder(director,avg),color=director))+
 
 # Omega Group plc- Pay Discrimination
 
-At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted. 
+At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries should be conducted. 
 
-We carried out the analysis to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
+Our team carried out the analysis to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
 
 ## Loading the data
 
@@ -254,7 +254,7 @@ glimpse(omega) # examine the data frame
 
 The data frame `omega` contains the salaries for the sample of 50 executives in the company. Is it possible to conclude that  there is a significant difference between the salaries of the male and female executives?
 
-To answer the question, we will start by analysing the key statistical parameters.
+To answer the question, we will start by analysing the key statistical parameters: mean, SD, sample size, confidence interval... 
 
 ```{r, confint_single_valiables}
 # Summary Statistics of salary by gender
@@ -272,11 +272,11 @@ statistics
 
 ```
 
-From the data, we can observe that the confidence intervals do not overlap. Hence, we can say that the difference between the salaries of male and female executives is at least 95% statistically significant.
+From the data obtained, we can observe that the confidence intervals do not overlap. Hence, we can conclude that there is a significant difference between the salaries of male and female executives. 
 
-We will also run a hypothesis testing, assuming a null hypothesis that the mean difference in salaries for mean and women is zero. 
+Additionally, we will run further tests to verify our conclusion: a hypothesis testing, assuming a null hypothesis that the mean difference in salaries for mean and women is zero. 
 
-```{r, hypothesis_testing}
+```{r, hypothesis_testing_salary_gender}
 # Hypothesis testing using t.test() 
 t.test(salary ~ gender, data = omega)
 
@@ -298,8 +298,7 @@ salaries_null_world %>% visualize() +
 #Get the numerical value for p
 salaries_null_world %>% get_p_value(obs_stat = init_sal_null, direction = "two_sided")
 ```
-
-From the hypothesis testing, we can confirm that.... CARRY ON WITH THIS!!!!
+From the hypothesis testing, we are more than 95% confident that the null hypothesis is untrue. A significant difference between the male and female executive salaries has been confirmed in 3 different ways: the hypothesis testing using t.test(), the plot of the null hypothesis distribution with a red line corresponding to the p-threshold (as we can visually observe the line is very far from 0), and a p<0.05. However, we cannot affirm that this significant difference is due to discrimination as there may be some other factors involved. Finding out the true causes of the salary gap requires further analyses.
 
 ## Relationship Experience - Gender?
 
@@ -318,7 +317,7 @@ select(experience,gender)%>%
 statistics
 ```
 
-The confidence intervals do not overlap. Hence, we can conclude that there is at least a 95% significant statistical difference between experience of female and male executives.
+The confidence intervals do not overlap. Hence, we can conclude that there is a significant difference in the experience of female and male executives.
 Further tests based on null hypothesis are conducted below.  
 ```{r, hypothesis_testing_experience}
 # Hypothesis testing using t.test() 
@@ -343,7 +342,7 @@ experience_null_world %>% visualize() +
 #Get the numerical p value
 experience_null_world %>% get_p_value(obs_stat = init_exp_null, direction = "two_sided")
 ```
-As we can see from the perfomed using t.test(), the plot of the null distribution and the p value obtained (which is less than 0.05)
+As we can see from the data obtained using t.test(), the plot of the null distribution and the p value (which is less than 0.05), the null hypothesis is less than 0.05 likely to be true. Hence, we can conclude that there is a significant difference between the experience of men and women. This conclusion doesn't endanger the previous one that indicated that salaries of men and women are significantly different. However, from the current analysis, we can say the salaries are not necessarily different due to factors such as gender discrimination, there can be other factors such as experience having an important effect on the salary gap. 
 
 ## Relationship Salary - Experience ?
 
