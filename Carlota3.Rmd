@@ -435,7 +435,7 @@ knitr::include_graphics(here::here("images", "gdp2.png"), error = FALSE)
 
 
 
-> What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries? 
+> What is this last chart telling you? Can you explain in a couple of paragraphs the different dynamic among these three countries?
 
 
 > If you want to, please change `country_list <- c("United States","India", "Germany")` to include your own country and compare it with any two other countries you like
