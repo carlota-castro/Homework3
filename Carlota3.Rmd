@@ -266,8 +266,8 @@ mosaic::favstats (salary ~ gender, data=omega)
 statistics<-omega%>%
 select(salary,gender)%>%
   group_by(gender)%>%
-  summarise(mean=mean(salary),SD=sd(salary),SampleSize=n(),t_critical=qt(0.975,SampleSize-1),SE=SD/sqrt(SampleSize),
-            MarginError=t_critical*SE,LowEndpoint=mean-MarginError,HighEndpoint=mean+MarginError)
+  summarise(mean=mean(salary),SD=sd(salary),SampleSize=n(),t_crit=qt(0.975,SampleSize-1),SE=SD/sqrt(SampleSize),
+            MarginError=t_crit*SE,LowBound=mean-MarginError,HighBound=mean+MarginError)
 statistics
 
 ```
@@ -300,7 +300,7 @@ salaries_null_world %>% visualize() +
 #Get the numerical value for p
 salaries_null_world %>% get_p_value(obs_stat = init_sal_null, direction = "two_sided")
 ```
-From the hypothesis testing, we are more than 95% confident that the null hypothesis is untrue. A significant difference between the male and female executive salaries has been confirmed in 3 different ways: the hypothesis testing using t.test(), the plot of the null hypothesis distribution with a red line corresponding to the p-threshold (as we can visually observe the line is very far from 0), and a p<0.05. However, we cannot affirm that this significant difference is due to discrimination as there may be some other factors involved. Finding out the true causes of the salary gap requires further analyses.
+From the hypothesis testing, we are more than 95% confident that the null hypothesis is untrue. A significant difference between the male and female executive salaries has been confirmed in 3 different ways: the hypothesis testing using t.test(), the plot of the null hypothesis distribution with a red line corresponding to the p-threshold (as we can visually observe the line is very far away from 0), and a p<0.05. However, we cannot affirm that this significant difference is due to discrimination as there may be some other factors involved. Finding out the true causes of the salary gap requires further analyses.
 
 ## Relationship Experience - Gender?
 
@@ -314,13 +314,14 @@ favstats (experience ~ gender, data=omega)
 statistics<-omega%>%
 select(experience,gender)%>%
   group_by(gender)%>%
-  summarise(mean=mean(experience),SD=sd(experience),SampleSize=n(),t_critical=qt(0.975,SampleSize-1),SE=SD/sqrt(SampleSize),
-  MarginError=t_critical*SE,LowEndpoint=mean-MarginError,HighEndpoint=mean+MarginError)
+  summarise(mean=mean(experience),SD=sd(experience),SampleSize=n(),t_crit=qt(0.975,SampleSize-1),SE=SD/sqrt(SampleSize),
+  MarginError=t_crit*SE,LowBound=mean-MarginError,HighBound=mean+MarginError)
 statistics
 ```
 
-The confidence intervals do not overlap. Hence, we can conclude that there is a significant difference in the experience of female and male executives.
+The 95% confidence intervals do not overlap. Hence, we can conclude that there is a significant difference in the experience of female and male executives.
 Further tests based on null hypothesis are conducted below.  
+
 ```{r, hypothesis_testing_experience}
 # Hypothesis testing using t.test() 
 t.test(experience ~ gender, data = omega)
@@ -346,7 +347,7 @@ experience_null_world %>% visualize() +
 #Get the numerical p value
 experience_null_world %>% get_p_value(obs_stat = init_exp_null, direction = "two_sided")
 ```
-From the data obtained using t.test(), the plot of the null distribution and the p value (which is less than 0.05), we can reject the null hypothesis.Hence, we can conclude that there is a significant difference between the experience of men and women. This conclusion doesn't endanger the previous one that indicated that salaries of men and women are significantly different. However, from the current analysis, we can say the salaries are not necessarily different due to factors such as gender discrimination, there can be other factors such as experience having an important effect on the salary gap. 
+From the data obtained using t.test(), the plot of the null distribution and the p value (which is less than 0.05), we can reject the null hypothesis. Hence, we can conclude that there is a significant difference between the experience of men and women. This conclusion doesn't endanger the previous one that indicated that salaries of men and women are significantly different. However, from the current analysis, we can say the salaries are not necessarily different due to factors such as gender discrimination, there can be other factors such as experience having an important effect on the salary gap. 
 
 ## Relationship Salary - Experience ?
 
@@ -356,7 +357,7 @@ Analyse the relationship between salary and experience. Draw a scatterplot to vi
 
 
 ```{r, salary_exp_scatter}
-ggplot(data=omega, aes(x=salary,y=experience))+geom_point()+labs(x="Salary",y="Experience")+theme_clean()
+ggplot(data=omega, aes(x=salary,y=experience))+geom_point()+labs(x="Salary",y="Experience")+geom_smooth()+theme_clean()
 
 ```
 
